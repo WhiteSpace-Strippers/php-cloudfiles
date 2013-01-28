@@ -3,130 +3,130 @@ require_once 'PHPUnit/Framework.php';
 require_once 'common.php';
 
 /**
-   * UTF8Testing tests class
-   *
-   * @package php-cloudfiles::tests
-   */
+	 * UTF8Testing tests class
+	 *
+	 * @package php-cloudfiles::tests
+	 */
 class UTF8 extends PHPUnit_Framework_TestCase
 {
-    public function __construct()
-    {
-        $this->auth = null;
-    }
-    
-    public function setUp()
-    {
+		public function __construct()
+		{
+				$this->auth = null;
+		}
 
-        global $UTF8_TEXT;
-        $this->utf8_text = $UTF8_TEXT;
-        
-        #Connect!
-        $this->auth = new CF_Authentication(USER, API_KEY);
-        $this->auth->authenticate();
-        
-        $this->conn = new CF_Connection($this->auth);
-        
-        #Make sure it's deleted at the end
-        $this->container = $this->conn->create_container("utf-8");
+		public function setUp()
+		{
 
-        $this->utf8_names=array();
-        $utf8_container_length= 15; // Length of each containers
-        $utf8_container_numbers= 20; // Number of containers to test
+				global $UTF8_TEXT;
+				$this->utf8_text = $UTF8_TEXT;
 
-        // Fill it up
-        for ($i = 0; $i < $utf8_container_numbers;$i++) {
-            array_push($this->utf8_names, random_utf8_string(10, $this->utf8_text));
-        }
-    }
-    
-    /**
-      * Test containers with different UTF8 name.
-      *
-      * @return None
-      */
-    public function test_container ()
-    { 
-        foreach ($this->utf8_names as $name) {
-            $container = $this->conn->create_container($name);
-            $this->assertEquals(get_class($container), "CF_Container");
-            $this->assertEquals($container->name, $name);
-        }
+				#Connect!
+				$this->auth = new CF_Authentication(USER, API_KEY);
+				$this->auth->authenticate();
 
-        foreach ($this->utf8_names as $name) {
-            $container = $this->conn->get_container($name);
-            $this->assertEquals($container->name, $name);            
-        }
+				$this->conn = new CF_Connection($this->auth);
 
-        foreach ($this->utf8_names as $name) {
-            $name = $this->conn->delete_container($name);
-            $this->assertTrue($name);
-        }
-        
-    }
+				#Make sure it's deleted at the end
+				$this->container = $this->conn->create_container("utf-8");
 
-    /**
-      * Test objects with different UTF8 name.
-      *
-      * @return None
-      */
-    public function test_object ()
-    { 
-        foreach ($this->utf8_names as $name) { 
-            $text = "Veni vidi vici says Julius Cesar";
-            $object = $this->container->create_object($name);
-            $object->content_type = "text/plain";
-            $result = $object->write($text);
-            $this->assertTrue($result);
-            $this->assertEquals(get_class($object), "CF_Object");
-            $this->assertEquals($object->name, $name);
-        }
+				$this->utf8_names=array();
+				$utf8_container_length= 15; // Length of each containers
+				$utf8_container_numbers= 20; // Number of containers to test
 
-        foreach ($this->utf8_names as $name) {
-            $object = $this->container->get_object($name);
-            $this->assertEquals($object->name, $name);            
-        }
+				// Fill it up
+				for ($i = 0; $i < $utf8_container_numbers;$i++) {
+						array_push($this->utf8_names, random_utf8_string(10, $this->utf8_text));
+				}
+		}
 
-        foreach ($this->utf8_names as $name) {
-            $name = $this->container->delete_object($name);
-            $this->assertTrue($name);
-        }
-    }
-       
-    /**
-      * Test the content of an object with UTF8 text inside it.
-      *
-      * @return None
-      */
-    public function test_object_content() {
-        //Create
-        foreach ($this->utf8_text as $lang => $text) {
-            $md5 = md5($text);
-            $object = $this->container->create_object($lang . ".txt");
-            $object->content_type = "text/plain";
-            $result = $object->write($text);
-            $this->assertEquals($md5, $object->getETag());
-        }
+		/**
+			* Test containers with different UTF8 name.
+			*
+			* @return None
+			*/
+		public function test_container ()
+		{
+				foreach ($this->utf8_names as $name) {
+						$container = $this->conn->create_container($name);
+						$this->assertEquals(get_class($container), "CF_Container");
+						$this->assertEquals($container->name, $name);
+				}
 
-        //Get
-        foreach ($this->utf8_text as $lang => $text) {
-            $md5 = md5($text);            
-            $object = $this->container->get_object($lang . ".txt");
-            $this->assertEquals($md5, $object->getETag());
-        }
+				foreach ($this->utf8_names as $name) {
+						$container = $this->conn->get_container($name);
+						$this->assertEquals($container->name, $name);
+				}
 
-        //Delete
-        foreach ($this->utf8_text as $lang => $text) {
-            $md5 = md5($text);            
-            $result = $this->container->delete_object($lang . ".txt");
-            $this->assertTrue($result);
-        }
-    }
+				foreach ($this->utf8_names as $name) {
+						$name = $this->conn->delete_container($name);
+						$this->assertTrue($name);
+				}
 
-    public function test_delete_main_container () { 
-        $result = $this->conn->delete_container("utf-8");
-        $this->assertTrue($result);        
-    }
-    
+		}
+
+		/**
+			* Test objects with different UTF8 name.
+			*
+			* @return None
+			*/
+		public function test_object ()
+		{
+				foreach ($this->utf8_names as $name) {
+						$text = "Veni vidi vici says Julius Cesar";
+						$object = $this->container->create_object($name);
+						$object->content_type = "text/plain";
+						$result = $object->write($text);
+						$this->assertTrue($result);
+						$this->assertEquals(get_class($object), "CF_Object");
+						$this->assertEquals($object->name, $name);
+				}
+
+				foreach ($this->utf8_names as $name) {
+						$object = $this->container->get_object($name);
+						$this->assertEquals($object->name, $name);
+				}
+
+				foreach ($this->utf8_names as $name) {
+						$name = $this->container->delete_object($name);
+						$this->assertTrue($name);
+				}
+		}
+
+		/**
+			* Test the content of an object with UTF8 text inside it.
+			*
+			* @return None
+			*/
+		public function test_object_content() {
+				//Create
+				foreach ($this->utf8_text as $lang => $text) {
+						$md5 = md5($text);
+						$object = $this->container->create_object($lang . ".txt");
+						$object->content_type = "text/plain";
+						$result = $object->write($text);
+						$this->assertEquals($md5, $object->getETag());
+				}
+
+				//Get
+				foreach ($this->utf8_text as $lang => $text) {
+						$md5 = md5($text);
+						$object = $this->container->get_object($lang . ".txt");
+						$this->assertEquals($md5, $object->getETag());
+				}
+
+				//Delete
+				foreach ($this->utf8_text as $lang => $text) {
+						$md5 = md5($text);
+						$result = $this->container->delete_object($lang . ".txt");
+						$this->assertTrue($result);
+				}
+		}
+
+		public function test_delete_main_container () {
+				$result = $this->conn->delete_container("utf-8");
+				$this->assertTrue($result);
+		}
+
 };
 
 ?>

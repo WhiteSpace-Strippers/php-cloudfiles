@@ -4,7 +4,7 @@ include /usr/share/cdbs/1/rules/debhelper.mk
 #include /usr/share/cdbs/1/rules/patchsys-quilt.mk
 
 # In order to regenerate 'debian/control' :
-#   DEB_AUTO_UPDATE_DEBIAN_CONTROL=yes fakeroot debian/rules clean
+#	 DEB_AUTO_UPDATE_DEBIAN_CONTROL=yes fakeroot debian/rules clean
 # Then check manually if everything's ok
 
 
